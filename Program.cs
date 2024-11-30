@@ -87,8 +87,16 @@ namespace LibraryManagementSystem
             Console.WriteLine($"Kitap Kiralama Ekranı\n{new string('-', 20)}");
             Console.WriteLine("Elimizdeki Mevcut Kitaplar\n");
             Console.Write($"{string.Join(new string('-', 20), ProgramObjects.books.Select(x => $"\n\n\nKitap Adı: {x.Title}\nKitabın Yazarı: {x.Author}\nYayınlanma Tarihi: {x.Year}\nStoktaki Adet: {x.Quantity}\n\n"))}\n\nLütfen Seçmek İstediğiniz Kitabın Adını Giriniz: ");
-            string Title = Console.ReadLine().ToLower(new CultureInfo("tr-TR"));
+            string Title = Console.ReadLine().ToLower();
             var book = ProgramObjects.books.Find(x => x.Title?.IndexOf(Title, StringComparison.OrdinalIgnoreCase) >= 0);
+
+            if (string.IsNullOrEmpty(Title))
+            {
+                Console.Clear();
+                Console.WriteLine("Geçerli Bir Kitap İsmi Giriniz");
+                Thread.Sleep(1000);
+                BorrowBook();
+            }
 
             if (book == null)
             {
@@ -107,25 +115,36 @@ namespace LibraryManagementSystem
             }
 
             Console.Clear();
-            Console.WriteLine("Kaç Gün Kiralamak İstiyorsunuz: ");
-            int Days = int.Parse(Console.ReadLine());
-            Console.WriteLine("Lütfen Bütçenizi Girin: ");
-            int Budget = int.Parse(Console.ReadLine());
+            try
+            {
+                Console.WriteLine("Kaç Gün Kiralamak İstiyorsunuz: ");
+                int Days = int.Parse(Console.ReadLine());
+                Console.WriteLine("Lütfen Bütçenizi Girin: ");
+                int Budget = int.Parse(Console.ReadLine());
 
-            if (Budget < Days * 5)
+                if (Budget < Days * 5)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Bütçeniz Yeterli Değil");
+                    Thread.Sleep(1000);
+                    return;
+                }
+
+                Console.Clear();
+                var loan = new Loan(book, Days);
+                ProgramObjects.loans.Add(book.Title, loan);
+                book.Quantity--;
+                Console.WriteLine($"{book.Title} Adlı Kitap {Days} Gün Kiralanmıştır");
+                Thread.Sleep(1000);
+            }
+            catch (Exception x)
             {
                 Console.Clear();
-                Console.WriteLine("Bütçeniz Yeterli Değil");
-                Thread.Sleep(1000);
+                Console.WriteLine($"{x.Message} Bundan Dolayı İşleminiz Gerçekleştirilememiştir.\nMenüye Dönmek İçin 'Enter' Tuşuna Basınız");
+                Console.ReadLine();
                 return;
             }
-
-            Console.Clear();
-            var loan = new Loan(book, Days);
-            ProgramObjects.loans.Add(Title, loan);
-            book.Quantity--;
-            Console.WriteLine($"{Title} Adlı Kitap {Days} Gün Kiralanmıştır");
-            Thread.Sleep(1000);
+            
         }
 
         static void ReturnBook()
