@@ -101,7 +101,7 @@ Program başlangıcında sisteme kayıtlı örnek kitaplar:
 ## Geliştiriciler İçin
 Projeyi klonlayın ve kendi geliştirme ortamınızda deneyin:
 ```bash
-git clone https://github.com/kullanıcıadı/kutuphane-yonetim-sistemi.git
+git clone https://github.com/mustafa44msi/LibraryManagementSystem.git
 ```
 
 ---
